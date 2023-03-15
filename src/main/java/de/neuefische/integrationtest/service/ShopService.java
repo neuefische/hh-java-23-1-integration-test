@@ -56,4 +56,12 @@ public class ShopService {
         productRepository.add(product);
         return product;
     }
+
+    public Product updateProduct(Product product) {
+        return productRepository.updateProduct(product);
+    }
+
+    public void deleteProduct(String id) {
+        productRepository.removeProduct(id);
+    }
 }

@@ -37,4 +37,18 @@ public class ShopController {
     public Product addProduct(@RequestBody Product product) {
         return shopService.addProduct(product);
     }
+
+    @PutMapping("/products/{id}")
+    public Product putProduct(@PathVariable String id, @RequestBody Product product ){
+        if (id.equals(product.id())) {
+            return shopService.updateProduct(product);
+        }
+
+        throw new IllegalArgumentException("Id's not matching");
+    }
+
+    @DeleteMapping("/products/{id}")
+    public void deleteProduct(@PathVariable String id){
+        shopService.deleteProduct(id);
+    }
 }

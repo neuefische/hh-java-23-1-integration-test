@@ -31,4 +31,19 @@ public class ProductRepository {
         products.add(product);
         return product;
     }
+
+    public Product updateProduct(Product product) {
+        products.remove(product);
+        products.add(product);
+        return product;
+    }
+
+    public void removeProduct(String id) {
+        for (Product product : products) {
+            if (product.id().equals(id)) {
+                products.remove(product);
+                return;
+            }
+        }
+    }
 }

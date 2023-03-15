@@ -11,9 +11,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -119,5 +118,45 @@ class ShopIntegrationTest {
                                          }
                                         """
                         ));
+    }
+
+    @Test
+    @DirtiesContext
+    void putProduct_shouldReturnChangedProduct() throws Exception {
+        productRepository.add(new Product("Tetrapack Wein", "1"));
+
+        mockMvc.perform(put("/api/shop/products/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                         {
+                                             "name": "Primitivo Wein",
+                                             "id": "1"
+                                         }
+                                        """
+                        ))
+                .andExpect(
+                        status().isOk()
+                )
+                .andExpect(
+                        content().json(
+                                """
+                                         {
+                                             "name": "Primitivo Wein",
+                                             "id": "1"
+                                         }
+                                        """
+                        ));
+    }
+
+    @Test
+    @DirtiesContext
+    void deleteProduct_shouldReturnEmptyBody() throws Exception {
+        productRepository.add(new Product("Tetrapack Wein", "1"));
+
+        mockMvc.perform(delete("/api/shop/products/1"))
+                .andExpect(
+                        status().isOk()
+                );
     }
 }
