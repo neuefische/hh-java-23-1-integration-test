@@ -13,8 +13,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 // Wir schreiben einen Integrationstest und stellen sicher dass
 // - die HTTP Methoden ausgeführt werden
@@ -58,6 +60,7 @@ class ShopIntegrationTest {
 
     @Test
     // @DirtiesContext = Putzkraft => Wenn du etwas eingefügt hast ins Repo, lösche es danach wieder!
+    // Immer über den Methoden, die den Speicher verändern
     @DirtiesContext
     void getAllProducts_shouldReturnListWithOneProduct_whenRepositoryHasOneProduct() throws Exception {
         // Wie kriegen wir etwas ins Repo?
@@ -86,24 +89,35 @@ class ShopIntegrationTest {
     @Test
     @DirtiesContext
     void addProduct_shouldReturnCreatedProduct() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/shop/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
+        // Wir verschicken eine POST Anfrage an die URL
+        mockMvc.perform(
+                        // WAS WIR VERSCHICKEN
+                        post("/api/shop/products")
+                                // Das ist unser Format - wir verschicken fast immer JSON
+                                .contentType(MediaType.APPLICATION_JSON)
+                                // Was im Body beim POST-Request verschickt wird
+                                .content(
+                                        """
+                                                 {
+                                                     "name": "Primitivo Wein",
+                                                     "id": "1"
+                                                 }
+                                                """
+                                ))
+                // VERGLEICH - IST UNSER ERGEBNIS RICHTIG?
+                .andExpect(
+                        // Der Status den wir zurück bekommen
+                        status().isOk()
+                )
+                .andExpect(
+                        // Das ist der Request Body - Der Inhalt den wir bekommen
+                        content().json(
                                 """
                                          {
-                                             "name": "Mayo",
+                                             "name": "Primitivo Wein",
                                              "id": "1"
                                          }
                                         """
-                        ))
-                .andExpect(status().isOk())
-                .andExpect(content().json(
-                        """
-                                 {
-                                     "name": "Mayo",
-                                     "id": "1"
-                                 }
-                                """
-                ));
+                        ));
     }
 }
