@@ -1,0 +1,7 @@
+POST localhost:8080/api/shop/products
+Content-Type: application/json
+
+{
+  "id": "1",
+  "name": "Mayo"
+}
